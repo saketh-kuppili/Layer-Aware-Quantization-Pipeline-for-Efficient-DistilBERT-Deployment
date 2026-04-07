@@ -1,0 +1,14 @@
+1. cd quantization_pipeline
+2. python3 -m venv venv
+3. source venv/bin/activate (Mac) or venv\Scripts\activate (Windows) 
+4. pip install --upgrade pip
+5. pip install -r requirements.txt
+6. python scripts/run_benchmark.py
+7. python scripts/run_sensitivity.py
+8. python app_gradio.py (http://127.0.0.1:7860)
+9. streamlit run app_streamlit.py (http://localhost:8501)
+10. Run Tests (important for grading): pytest tests/
+
+
+token: 
+hf auth login
