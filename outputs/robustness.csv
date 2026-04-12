@@ -1,9 +1,0 @@
-mode,perturbation,accuracy
-fp32,clean,0.91
-fp32,typo_0.1,0.64
-fp32,drop_0.15,0.86
-fp32,noise_0.08,0.72
-int8_ptq,clean,0.9
-int8_ptq,typo_0.1,0.6
-int8_ptq,drop_0.15,0.85
-int8_ptq,noise_0.08,0.71

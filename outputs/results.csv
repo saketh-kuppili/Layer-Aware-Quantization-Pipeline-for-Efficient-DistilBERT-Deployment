@@ -1,5 +1,0 @@
-mode,accuracy,avg_latency_ms,p99_latency_ms,memory_mb
-fp32,0.915,13.92,15.39,255.42
-fp16,0.915,11.45,23.92,127.71
-int8_ptq,0.91,8.69,15.12,91.0
-int8_qat,0.81,9.2,39.84,91.0
