@@ -35,7 +35,7 @@ if "page"           not in st.session_state: st.session_state.page           = "
 if "pred_result"    not in st.session_state: st.session_state.pred_result    = None
 if "pred_last_text" not in st.session_state: st.session_state.pred_last_text = ""
 
-PAGES = ["Benchmark report", "Run history", "Robustness", "Sensitivity"]
+PAGES = ["Benchmark report", "Robustness", "Sensitivity"]
 page  = st.session_state.page
 
 # ---- CSS ---------------------------------------------------------------------
@@ -134,8 +134,9 @@ section[data-testid="stSidebar"] .stRadio > div { gap: 0 !important; display: fl
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] { gap: 0 !important; }
 section[data-testid="stSidebar"] .stRadio label {
     padding: 8px 20px !important; margin: 0 !important; border-radius: 0 !important;
-    font-size: 13px !important; font-weight: 400 !important; color: #6b7280 !important;
+    font-size: 13px !important; font-weight: 500 !important; color: #111111 !important;
     cursor: pointer !important; min-height: unset !important;
+    width: 100% !important; display: block !important;
 }
 section[data-testid="stSidebar"] .stRadio label:hover { background: #f3f4f6 !important; color: #111 !important; }
 section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
@@ -143,7 +144,7 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
     font-weight: 600 !important; border-right: 2px solid #2563eb !important;
 }
 section[data-testid="stSidebar"] .stRadio label:has(input:checked) p { color: #2563eb !important; font-weight: 600 !important; }
-section[data-testid="stSidebar"] .stRadio label p { font-size: 13px !important; margin: 0 !important; color: inherit !important; }
+section[data-testid="stSidebar"] .stRadio label p { font-size: 13px !important; margin: 0 !important; color: inherit !important; width: 100% !important; }
 section[data-testid="stSidebar"] .stRadio label > div:first-child { display: none !important; }
 .sb-nav-item {
     display: block; padding: 8px 20px; font-size: 13px; font-weight: 400;
@@ -303,6 +304,37 @@ div[data-baseweb="tab-list"] { border-bottom: 1px solid #e5e7eb !important; }
 /* ---- Empty state ---- */
 .empty-state { text-align: center; padding: 48px 24px; color: #9ca3af; font-size: 13px; line-height: 1.7; }
 .empty-state strong { display: block; font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+            
+section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
+    width: 100% !important;
+}
+section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label > div:last-child {
+    width: 100% !important;
+    flex: 1 !important;
+}
+            
+section[data-testid="stSidebar"] .stRadio {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+section[data-testid="stSidebar"] .stRadio > div {
+    width: 100% !important;
+}
+section[data-testid="stSidebar"] .stElementContainer {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+    width: 100% !important;
+    padding: 0 !important;
+}
+                     
 </style>
 
 <script>
@@ -615,28 +647,6 @@ if page == "Benchmark report":
 
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
     st.markdown('<div class="footer">QuantBench &nbsp;&middot;&nbsp; Model Quantization Analysis Platform &nbsp;&middot;&nbsp; v1.0</div>', unsafe_allow_html=True)
-
-
-# ==============================================================================
-# PAGE: Run history
-# ==============================================================================
-elif page == "Run history":
-    st.markdown("""
-    <div class="page-title">Run history</div>
-    <div class="page-sub">Past benchmark runs and their results over time.</div>
-    """, unsafe_allow_html=True)
-    try:
-        hist_df = pd.read_csv("outputs/run_history.csv")
-        st.markdown('<span class="section-label">All runs</span>', unsafe_allow_html=True)
-        st.markdown('<div class="card"><div class="card-body-flush">' + render_table(hist_df) + '</div></div>', unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.markdown("""
-        <div class="card"><div class="card-body">
-            <div class="empty-state">
-                <strong>No run history yet</strong>
-                Each time you run <code>python scripts/run_benchmark.py</code> results will be logged here.
-            </div>
-        </div></div>""", unsafe_allow_html=True)
 
 
 # ==============================================================================

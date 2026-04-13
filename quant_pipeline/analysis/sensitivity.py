@@ -8,26 +8,30 @@ to determine which components are most sensitive to quantization.
 
 import torch
 import torch.nn as nn
+import platform
 from copy import deepcopy
+
+
+def _set_quantization_backend():
+    """Set the appropriate quantization backend for the current platform."""
+    system = platform.system()
+    processor = platform.processor()
+    is_mac = system == "Darwin"
+    is_arm = "arm" in processor.lower() or "apple" in processor.lower()
+
+    if is_mac and is_arm:
+        torch.backends.quantized.engine = "qnnpack"
+    else:
+        torch.backends.quantized.engine = "fbgemm"
 
 
 def quantize_single_layer(model, target_layer_name):
     """
     Quantize a single module (and all its Linear children) to INT8,
     leaving all other modules at FP32.
-
-    Parameters
-    ----------
-    model : nn.Module
-        The FP32 model (will be deep-copied, not modified).
-    target_layer_name : str
-        Dot-separated path to the module.
-
-    Returns
-    -------
-    nn.Module
-        Model with only the target module's Linear layers quantized.
     """
+    _set_quantization_backend()
+
     modified = deepcopy(model)
     modified.eval()
 
@@ -43,7 +47,6 @@ def quantize_single_layer(model, target_layer_name):
 
     target = getattr(parent, parts[-1])
 
-    # Quantize all Linear layers within this module
     quantized = torch.quantization.quantize_dynamic(
         target,
         {nn.Linear},
@@ -57,43 +60,23 @@ def quantize_single_layer(model, target_layer_name):
 def get_quantizable_layers(model, max_layers=None, granularity="block"):
     """
     Get names of quantizable components in the model.
-
-    Parameters
-    ----------
-    model : nn.Module
-        The model to inspect.
-    max_layers : int, optional
-        Limit the number of components returned.
-    granularity : str
-        'block' — full transformer blocks + classifier head (recommended).
-        'layer' — individual nn.Linear layers.
-
-    Returns
-    -------
-    list[str]
-        Component names suitable for sensitivity analysis.
     """
     if granularity == "block":
         layers = []
 
-        # DistilBERT transformer blocks
         if hasattr(model, "distilbert"):
             transformer = model.distilbert.transformer
             for i in range(len(transformer.layer)):
                 block = f"distilbert.transformer.layer.{i}"
                 layers.append(block)
-
-                # Also add sub-components for finer analysis
                 layers.append(f"{block}.attention")
                 layers.append(f"{block}.ffn")
 
-            # Classifier head
             if hasattr(model, "pre_classifier"):
                 layers.append("pre_classifier")
             if hasattr(model, "classifier"):
                 layers.append("classifier")
         else:
-            # Fallback: individual Linear layers
             layers = [
                 name for name, module in model.named_modules()
                 if isinstance(module, nn.Linear)
@@ -113,29 +96,6 @@ def get_quantizable_layers(model, max_layers=None, granularity="block"):
 def analyze_sensitivity(model, tokenizer, texts, labels, layer_names, benchmark_fn):
     """
     Run layer-wise sensitivity analysis.
-
-    For each component: quantize ONLY that component, measure accuracy,
-    compare with FP32 baseline.
-
-    Parameters
-    ----------
-    model : nn.Module
-        The FP32 baseline model.
-    tokenizer : PreTrainedTokenizer
-        Tokenizer for encoding text.
-    texts : list[str]
-        Evaluation sentences.
-    labels : list[int]
-        Ground truth labels.
-    layer_names : list[str]
-        Components to analyze.
-    benchmark_fn : callable
-        Function with signature (model, tokenizer, texts, labels) -> dict.
-
-    Returns
-    -------
-    tuple
-        (results_dict, baseline_accuracy)
     """
     print("Computing FP32 baseline...")
     baseline = benchmark_fn(model, tokenizer, texts, labels)

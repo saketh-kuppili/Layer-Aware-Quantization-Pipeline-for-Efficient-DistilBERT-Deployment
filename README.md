@@ -16,4 +16,3 @@ python scripts/run_benchmark.py
 python scripts/run_sensitivity.py
 
 streamlit run app_streamlit.py
-python app_gradio.py
