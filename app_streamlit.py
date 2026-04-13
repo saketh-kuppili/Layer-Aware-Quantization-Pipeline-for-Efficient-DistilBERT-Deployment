@@ -1,6 +1,5 @@
 """
 Streamlit dashboard for quantization benchmark results.
-Design: Option C - blue accent, sidebar + main, functional nav
 """
 import os
 import pathlib
@@ -453,7 +452,7 @@ with st.sidebar:
     <span class="sb-section">Analysis</span>
     """, unsafe_allow_html=True)
 
-    selected = st.radio("nav", PAGES, index=PAGES.index(page), label_visibility="collapsed")
+    selected = st.radio(PAGES, index=PAGES.index(page), label_visibility="collapsed")
     if selected != page:
         st.session_state.page = selected
         st.rerun()
