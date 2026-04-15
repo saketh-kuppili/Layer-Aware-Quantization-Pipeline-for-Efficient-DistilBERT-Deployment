@@ -283,4 +283,4 @@ Raw Text (SST-2)
 
 Saketh Kuppili (002014840) | Ashvath Cheppalli (002500670)
 
-CS 5130 — Applied Programming and Data Processing for AI, Northeastern University
+CS 5130 — Applied Programming and Data Processing for AI
