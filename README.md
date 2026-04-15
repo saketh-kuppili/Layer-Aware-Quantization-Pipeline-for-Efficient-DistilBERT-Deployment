@@ -44,7 +44,6 @@ This pipeline answers three deployment questions:
 ├── tests/                           # Unit tests
 │   ├── __init__.py
 │   └── test_all.py                  #   24 tests across all modules
-├── app_gradio.py                    # Gradio demo interface
 ├── app_streamlit.py                 # Streamlit dashboard
 ├── setup.py                         # Package installation
 ├── requirements.txt                 # Dependencies
@@ -117,39 +116,33 @@ python scripts/run_sensitivity.py
 # Run unit tests
 pytest tests/ -v
 
-# Launch Gradio demo (opens at http://127.0.0.1:7860)
-python app_gradio.py
-
 # Launch Streamlit dashboard (opens at http://localhost:8501)
 streamlit run app_streamlit.py
 ```
 
 ## Setup & Run — Google Colab
 
-### 1. Clone the repository
+### Cell 1 — Clone and install
 
 ```python
 !git clone https://github.com/saketh-kuppili/Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment.git
 %cd Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment
-```
-
-### 2. Install dependencies
-
-```python
 !pip install -r requirements.txt -q
 !pip install -e . -q
 !pip install plotly -q
 ```
 
-### 3. Set up HuggingFace token
+### Cell 2 — Set up HuggingFace token
 
 ```python
 import os
 os.environ["HF_TOKEN"] = "hf_your_token_here"
 ```
 
+Replace `hf_your_token_here` with your actual token.
+
 Or use Colab Secrets (recommended — keeps token hidden):
-1. Click the **key icon** (🔑) on the left sidebar
+1. Click the **key icon** on the left sidebar
 2. Add a new secret named `HF_TOKEN` with your token
 3. Toggle **Notebook access** on
 4. Then use:
@@ -166,35 +159,34 @@ except Exception:
     print("Token set manually")
 ```
 
-### 4. Run the pipeline
+### Cell 3 — Run benchmark
 
 ```python
-# Full benchmark + robustness
 !python scripts/run_benchmark.py
+```
 
-# Layer sensitivity analysis
+### Cell 4 — Run sensitivity
+
+```python
 !python scripts/run_sensitivity.py
+```
 
-# Run unit tests
+### Cell 5 — Run tests
+
+```python
 !pytest tests/ -v
 ```
 
-### 5. Launch Gradio (in Colab)
+### Cell 6 — Launch Streamlit
 
-```python
-!python app_gradio.py
-```
-
-Click the public Gradio link that appears.
-
-### 6. Launch Streamlit (in Colab)
-
+Cell 6a — Install tunnel:
 ```python
 !pip install streamlit -q
 !wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
 !dpkg -i cloudflared-linux-amd64.deb
 ```
 
+Cell 6b — Start Streamlit:
 ```python
 !cd /content/Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment && streamlit run app_streamlit.py \
   --server.port 8501 \
@@ -202,6 +194,7 @@ Click the public Gradio link that appears.
   &>/content/logs.txt &
 ```
 
+Cell 6c — Get public URL:
 ```python
 import subprocess, re
 process = subprocess.Popen(
@@ -253,20 +246,19 @@ Raw Text (SST-2)
                          ▼
               ┌──────────────────────┐
               │  Dashboard + CSV     │
-              │  Streamlit / Gradio  │
+              │  Streamlit           │
               └──────────────────────┘
 ```
 
-## Evaluation Metrics
+## Sample Sizes
 
-| Metric | Description |
-|--------|-------------|
-| Accuracy | Classification accuracy on clean + perturbed data |
-| Avg Latency | Mean inference time per sample (ms) |
-| P99 Latency | 99th percentile inference time (worst-case) |
-| Memory | Model size in MB (parameters + buffers) |
-| Sensitivity | Per-layer accuracy delta when quantized individually |
-| Robustness Gap | Accuracy difference between FP32 and INT8 under perturbation |
+| Purpose | Split | Samples |
+|---------|-------|---------|
+| Benchmark evaluation | validation | 200 |
+| QAT fine-tuning | train | 300 |
+| QAT fine-tuning (Streamlit demo) | train | 300 |
+| Robustness evaluation | validation | 100 |
+| Sensitivity analysis | validation | 200 |
 
 ## Key Design Decisions
 
@@ -277,16 +269,18 @@ Raw Text (SST-2)
 - **Single forward pass** in benchmark — no double inference
 - **Memory includes buffers** — quantized models store scale/zero-point as buffers
 
-## Sample Sizes
+## Troubleshooting
 
-| Purpose | Split | Samples |
-|---------|-------|---------|
-| Benchmark evaluation | train | 1,000 |
-| QAT fine-tuning (benchmark) | train | 1,000 |
-| QAT fine-tuning (Streamlit demo) | train | 300 |
-| Robustness evaluation | train | 1,000 |
-| Sensitivity analysis | train | 1,000 |
+**"Dataset not found" error:** Your HuggingFace token may not be set. Re-run the token setup step.
 
+**"NoQEngine" error on Mac:** Expected — Mac's `qnnpack` backend has limited INT8 support. The pipeline automatically falls back to FP16.
 
+**Streamlit QAT takes long time:** First-time QAT inference trains the model on 300 samples. Subsequent predictions are instant (cached).
 
+**Tests fail:** Make sure you installed the package with `pip install -e .` before running `pytest tests/ -v`.
 
+## Authors
+
+Saketh Kuppili (002014840) | Ashvath Cheppalli (002500670)
+
+CS 5130 — Applied Programming and Data Processing for AI, Northeastern University
