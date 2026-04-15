@@ -129,6 +129,13 @@ pytest tests/ -v
 # Launch Streamlit dashboard (opens at http://localhost:8501)
 streamlit run app_streamlit.py
 ```
+### 6. Output files
+
+After running the scripts, results are saved in the `outputs/` folder:
+- `results.csv` — Benchmark results (accuracy, latency, memory for all 4 modes)
+- `robustness.csv` — Robustness comparison (FP32 vs INT8 under perturbations)
+- `robustness.png` — Robustness comparison chart
+- `sensitivity.png` — Layer sensitivity chart
 
 ## Setup & Run — Google Colab
 
@@ -202,6 +209,13 @@ for line in process.stdout:
             print("Open this link:", url.group(0))
             break
 ```
+### 7. Output files
+
+After running the scripts, results are saved in the `outputs/` folder:
+- `results.csv` — Benchmark results (accuracy, latency, memory for all 4 modes)
+- `robustness.csv` — Robustness comparison (FP32 vs INT8 under perturbations)
+- `robustness.png` — Robustness comparison chart
+- `sensitivity.png` — Layer sensitivity chart
 
 ## Pipeline Architecture
 
