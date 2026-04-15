@@ -452,7 +452,7 @@ with st.sidebar:
     <span class="sb-section">Analysis</span>
     """, unsafe_allow_html=True)
 
-    selected = st.radio(PAGES, index=PAGES.index(page), label_visibility="collapsed")
+    selected = st.radio(" ", PAGES, index=PAGES.index(page), label_visibility="collapsed")
     if selected != page:
         st.session_state.page = selected
         st.rerun()
