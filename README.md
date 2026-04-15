@@ -136,10 +136,15 @@ streamlit run app_streamlit.py
 
 ```python
 !git clone https://github.com/saketh-kuppili/Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment.git
+```
+```python
 %cd Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment
+```
+```python
 !pip install -r requirements.txt -q
+```
+```python
 !pip install -e . -q
-!pip install plotly -q
 ```
 
 ### Cell 2 — Set up HuggingFace token
@@ -148,27 +153,6 @@ streamlit run app_streamlit.py
 import os
 os.environ["HF_TOKEN"] = "hf_your_token_here"
 ```
-
-Replace `hf_your_token_here` with your actual token.
-
-Or use Colab Secrets (recommended — keeps token hidden):
-1. Click the **key icon** on the left sidebar
-2. Add a new secret named `HF_TOKEN` with your token
-3. Toggle **Notebook access** on
-4. Then use:
-
-```python
-from google.colab import userdata
-import os
-
-try:
-    os.environ["HF_TOKEN"] = userdata.get("HF_TOKEN")
-    print("Token loaded from Colab secrets")
-except Exception:
-    os.environ["HF_TOKEN"] = input("Enter HuggingFace token: ")
-    print("Token set manually")
-```
-
 ### Cell 3 — Run benchmark
 
 ```python
