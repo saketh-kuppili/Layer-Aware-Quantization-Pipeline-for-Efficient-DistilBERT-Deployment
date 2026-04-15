@@ -75,6 +75,9 @@ This pipeline answers three deployment questions:
 
 ```bash
 git clone https://github.com/saketh-kuppili/Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment.git
+```
+
+```bash
 cd Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment
 ```
 
@@ -82,6 +85,9 @@ cd Layer-Aware-Quantization-Pipeline-for-Efficient-DistilBERT-Deployment
 
 ```bash
 python3 -m venv venv
+```
+
+```bash
 source venv/bin/activate          # Mac/Linux
 # venv\Scripts\activate           # Windows
 ```
@@ -90,7 +96,11 @@ source venv/bin/activate          # Mac/Linux
 
 ```bash
 pip install --upgrade pip
+```
+```bash
 pip install -r requirements.txt
+```
+```bash
 pip install -e .
 ```
 
